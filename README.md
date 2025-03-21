@@ -62,13 +62,13 @@ Add to your `.bashrc` or `.zshrc`:
 alias x="xeet post --"
 alias fr="xeet post -- 'fr fr no cap'"
 alias npc="xeet post -- 'yesss true'"
+alias npcrypto="xeet post -- 'gm!'"
 ```
 
 Now you can post with:
 
 ```bash
 x "This meeting could've been an email frfr"
-take "IDEs are just fancy text editors"
 fr
 npc
 ```
@@ -84,8 +84,6 @@ bind -x '"\e[21~": "xeet post -- \"skill issue\""'  # F10 for instant L posting
 ## Features
 
 - Terminal shitposting (no browser = based)
-- OAuth authentication (secure-pilled)
-- Works from ANY directory (location-pilled)
 - Won't get you maidenless (results may vary)
 
 ## License
