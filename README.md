@@ -48,10 +48,23 @@ xeet post -- "Hot take: semicolons in JavaScript are just spicy line breaks"
 Schedule a post for later (touch grass in the meantime):
 
 ```bash
+xeet post --schedule 30 -- "Just had a great idea while touching grass, semicolons in JavaScript are just spicy line breaks"
+```
+
+Or use the shorthand version:
+
+```bash
 xeet post -s 30 -- "I'm totally working and did not go out for a walk 30 minutes ago"
 ```
 
 Scheduled posts run in the background, so your terminal remains free to use for other tasks!
+
+If a scheduled post fails, you can check the logs:
+
+```bash
+xeet logs      # Shows the latest log
+xeet logs -a   # Shows all logs
+```
 
 Need setup help? Type:
 

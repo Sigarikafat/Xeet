@@ -28,6 +28,12 @@ enum Commands {
     },
     /// Setup your Twitter credentials
     Setup,
+    /// View recent schedule logs
+    Logs {
+        /// Show full logs (default shows only the latest)
+        #[clap(short, long)]
+        all: bool,
+    },
 }
 
 struct Config {
@@ -124,6 +130,9 @@ async fn main() -> Result<()> {
         Commands::Setup => {
             setup()?;
         }
+        Commands::Logs { all } => {
+            view_logs(all)?;
+        }
     }
 
     Ok(())
@@ -187,64 +196,159 @@ fn setup() -> Result<()> {
 }
 
 async fn schedule_xeet(minutes: u64, text: String) -> Result<()> {
-    println!("{} Scheduling post for {} minutes from now", "⏰", minutes);
+    println!("{} Scheduling post for {} minutes from now", "⏰".cyan().bold(), minutes);
 
     // Convert minutes to seconds
     let delay_secs = minutes * 60;
 
     // Create a command to schedule the post using another process
     let current_exe = env::current_exe().context("Failed to get current executable path")?;
-
-    // Build the command that will be run in the background
+    
+    // Create logs directory inside the config directory
+    let config_path = Config::get_config_path()?;
+    let logs_dir = config_path.parent().unwrap().join("logs");
+    if !logs_dir.exists() {
+        fs::create_dir_all(&logs_dir).context("Failed to create logs directory")?;
+    }
+    
+    // Create a timestamped log file name
+    let now = chrono::Local::now();
+    let log_file = logs_dir.join(format!("schedule_{}.log", now.format("%Y%m%d_%H%M%S")));
+    
+    // Build the command that will be run in the background with output redirected to log file
     let mut command = if cfg!(windows) {
         let mut cmd = std::process::Command::new("cmd");
         cmd.args([
-            "/C",
+            "/C", 
             &format!(
-                "timeout /T {} /NOBREAK > nul && \"{}\" post -- \"{}\"",
-                delay_secs,
+                "echo Scheduled at: {} > \"{}\" && echo Will execute at: {} >> \"{}\" && echo Command: {} post -- \"{}\" >> \"{}\" && timeout /T {} /NOBREAK > nul && \"{}\" post -- \"{}\" 2>> \"{}\" >> \"{}\"", 
+                now.format("%Y-%m-%d %H:%M:%S"),
+                log_file.display(),
+                now.checked_add_signed(chrono::Duration::minutes(minutes as i64))
+                    .unwrap_or(now)
+                    .format("%Y-%m-%d %H:%M:%S"),
+                log_file.display(),
                 current_exe.display(),
-                text.replace("\"", "\\\"")
-            ),
+                text.replace("\"", "\\\""),
+                log_file.display(),
+                delay_secs, 
+                current_exe.display(), 
+                text.replace("\"", "\\\""),
+                log_file.display(),
+                log_file.display()
+            )
         ]);
         cmd
     } else {
         let mut cmd = std::process::Command::new("sh");
         cmd.args([
-            "-c",
+            "-c", 
             &format!(
-                "sleep {} && \"{}\" post -- \"{}\" &",
-                delay_secs,
+                "echo 'Scheduled at: {}' > \"{}\" && echo 'Will execute at: {}' >> \"{}\" && echo 'Command: {} post -- \"{}\"' >> \"{}\" && (sleep {} && \"{}\" post -- \"{}\" 2>> \"{}\" >> \"{}\" &)", 
+                now.format("%Y-%m-%d %H:%M:%S"),
+                log_file.display(),
+                now.checked_add_signed(chrono::Duration::minutes(minutes as i64))
+                    .unwrap_or(now)
+                    .format("%Y-%m-%d %H:%M:%S"),
+                log_file.display(),
                 current_exe.display(),
-                text.replace("\"", "\\\"")
-            ),
+                text.replace("\"", "\\\""),
+                log_file.display(),
+                delay_secs, 
+                current_exe.display(), 
+                text.replace("\"", "\\\""),
+                log_file.display(),
+                log_file.display()
+            )
         ]);
         cmd
     };
-
-    // Detach the process so it runs in the background
+    
+    // For non-Windows systems, detach the process
     if !cfg!(windows) {
-        command
-            .stdin(std::process::Stdio::null())
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null());
+        command.stdin(std::process::Stdio::null());
     }
-
+    
     // Spawn the process
     match command.spawn() {
         Ok(_) => {
+            let scheduled_time = now.checked_add_signed(chrono::Duration::minutes(minutes as i64))
+                .map(|dt| dt.format("%H:%M:%S").to_string())
+                .unwrap_or_else(|| format!("{} minutes from now", minutes));
+            
             println!(
                 "{} Post scheduled successfully for {}. Terminal is free to use.",
                 "✓".green().bold(),
-                chrono::Local::now()
-                    .checked_add_signed(chrono::Duration::minutes(minutes as i64))
-                    .map(|dt| dt.format("%H:%M:%S").to_string())
-                    .unwrap_or_else(|| format!("{} minutes from now", minutes))
+                scheduled_time
             );
-        }
+            println!(
+                "{} Check logs at {} if the post fails to send.",
+                "📝".cyan().bold(),
+                log_file.display()
+            );
+        },
         Err(e) => {
             println!("{} Failed to schedule post: {}", "✗".red().bold(), e);
             anyhow::bail!("Failed to schedule post");
+        }
+    }
+
+    Ok(())
+}
+
+fn view_logs(all: bool) -> Result<()> {
+    let config_path = Config::get_config_path()?;
+    let logs_dir = config_path.parent().unwrap().join("logs");
+
+    if !logs_dir.exists() {
+        println!("{} No logs found.", "📝".cyan().bold());
+        return Ok(());
+    }
+
+    let mut log_files = fs::read_dir(&logs_dir)?
+        .filter_map(|entry| entry.ok())
+        .filter(|entry| entry.file_type().map(|ft| ft.is_file()).unwrap_or(false))
+        .filter(|entry| {
+            entry.file_name()
+                .to_string_lossy()
+                .starts_with("schedule_")
+        })
+        .map(|entry| entry.path())
+        .collect::<Vec<_>>();
+
+    // Sort by file name (which contains timestamp) in reverse order to get newest first
+    log_files.sort_by(|a, b| b.file_name().cmp(&a.file_name()));
+
+    if log_files.is_empty() {
+        println!("{} No logs found.", "📝".cyan().bold());
+        return Ok(());
+    }
+
+    if all {
+        println!("{} All logs (newest first):", "📝".cyan().bold());
+        for log_file in log_files {
+            println!("\n{} {}:", "📄".yellow().bold(), log_file.file_name().unwrap().to_string_lossy());
+            match fs::read_to_string(&log_file) {
+                Ok(content) => {
+                    for line in content.lines() {
+                        println!("  {}", line);
+                    }
+                },
+                Err(e) => println!("  Error reading log: {}", e)
+            }
+            println!("---");
+        }
+    } else {
+        println!("{} Latest log:", "📝".cyan().bold());
+        let latest_log = &log_files[0];
+        println!("{} {}:", "📄".yellow().bold(), latest_log.file_name().unwrap().to_string_lossy());
+        match fs::read_to_string(latest_log) {
+            Ok(content) => {
+                for line in content.lines() {
+                    println!("  {}", line);
+                }
+            },
+            Err(e) => println!("  Error reading log: {}", e)
         }
     }
 
