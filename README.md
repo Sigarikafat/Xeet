@@ -1,6 +1,6 @@
 # Xeet
 
-A command-line tool that lets you post to X (formerly Twitter) directly from your terminal.
+Terminal-based shitposting for chronically online devs who can't be bothered to open a browser. Post to X (formerly Twitter) without ever leaving your precious terminal. #TouchGrass
 
 ## Installation
 
@@ -8,60 +8,87 @@ A command-line tool that lets you post to X (formerly Twitter) directly from you
 cargo install --path .
 ```
 
-## Setup
+## SPEED-RUN Setup (any%)
 
-1. Create a Twitter Developer account at [developer.twitter.com](https://developer.twitter.com/)
+1. Get API keys from [developer.twitter.com](https://developer.twitter.com/)
 
-2. Create a new Project and App in the Developer Portal:
+   - Make a project/app, enable OAuth 1.0a
+   - Set to "Read and Write" perms (IMPORTANT)
+   - Grab API Key, API Secret, Access Token, and Access Token Secret
 
-   - Go to the [Developer Portal](https://developer.twitter.com/en/portal/dashboard)
-   - Click "Create Project"
-   - Give your project a name and select "Production" as the environment
-   - Select "Create App"
+2. Create a global config file (works from ANY directory, no cap):
 
-3. Enable read and write permissions:
+   ```bash
+   # For MacOS/Linux enjoyers:
+   mkdir -p ~/.config/xeet
+   nano ~/.config/xeet/config.toml
 
-   - In your app's settings, go to "User authentication settings"
-   - Enable "OAuth 1.0a"
-   - In the App Permissions section, select "Read and Write"
-   - Save your changes
-
-4. Get your API credentials:
-
-   - Go to "Keys and Tokens" tab
-   - Copy your "API Key" and "API Key Secret"
-   - Generate "Access Token and Secret" with read and write permissions
-   - Copy both the Access Token and Access Token Secret
-
-5. Create a `.env` file in your project directory:
-   ```
-   X_CONSUMER_KEY=your_api_key
-   X_CONSUMER_SECRET=your_api_secret
-   X_ACCESS_TOKEN=your_access_token
-   X_ACCESS_SECRET=your_access_token_secret
+   # For Windows NPCs:
+   mkdir -p %APPDATA%\xeet
+   notepad %APPDATA%\xeet\config.toml
    ```
 
-## Usage
+3. Paste this in your config file and you're BASED:
+   ```toml
+   [credentials]
+   consumer_key = "your_api_key"
+   consumer_secret = "your_api_secret"
+   access_token = "your_access_token"
+   access_secret = "your_access_token_secret"
+   ```
 
-To post a message:
+## Usage (aka How to Main Character)
+
+Basic shitposting:
 
 ```bash
-xeet post -- "Your message here"
+xeet post -- "Hot take: semicolons in JavaScript are just spicy line breaks"
 ```
 
-To view setup instructions:
+Need setup help? Type:
 
 ```bash
 xeet setup
 ```
 
+## Pro Strats (Touch Grass Any% Speedrun)
+
+### God-tier Aliases
+
+Add to your `.bashrc` or `.zshrc`:
+
+```bash
+# For maximum efficiency bruh
+alias x="xeet post --"
+alias take="xeet post -- 'Hot take:'"
+alias fr="xeet post -- 'fr fr no cap'"
+alias npc="xeet post -- 'NPC behavior'"
+```
+
+Now you can post with:
+
+```bash
+x "This meeting could've been an email frfr"
+take "IDEs are just fancy text editors"
+fr
+npc
+```
+
+### Keyboard Shortcuts
+
+Set up function keys in your terminal config:
+
+```bash
+bind -x '"\e[21~": "xeet post -- \"skill issue\""'  # F10 for instant L posting
+```
+
 ## Features
 
-- Post to X directly from your terminal
-- OAuth 1.0a authentication
-- Colored terminal output
-- Helpful setup instructions
+- Terminal shitposting (no browser = based)
+- OAuth authentication (secure-pilled)
+- Works from ANY directory (location-pilled)
+- Won't get you maidenless (results may vary)
 
 ## License
 
-MIT
+MIT (it's giving generous)

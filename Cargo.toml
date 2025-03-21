@@ -9,6 +9,6 @@ description = "A terminal app to tweet from your command line"
 twitter-v2 = "0.1.8"
 tokio = { version = "1.28.0", features = ["full"] }
 clap = { version = "4.3.0", features = ["derive"] }
-dotenv = "0.15.0"
 colored = "2.0.0"
 anyhow = "1.0.71"
+toml = "0.8"
