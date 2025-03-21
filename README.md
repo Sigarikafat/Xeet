@@ -60,9 +60,8 @@ Add to your `.bashrc` or `.zshrc`:
 ```bash
 # For maximum efficiency bruh
 alias x="xeet post --"
-alias take="xeet post -- 'Hot take:'"
 alias fr="xeet post -- 'fr fr no cap'"
-alias npc="xeet post -- 'NPC behavior'"
+alias npc="xeet post -- 'yesss true'"
 ```
 
 Now you can post with:

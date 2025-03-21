@@ -117,11 +117,8 @@ async fn main() -> Result<()> {
 }
 
 async fn send_xeet(text: String) -> Result<()> {
-    println!("{}", "Sending xeet...".cyan());
-    
     let config = Config::from_env()?;
     
-    // Create an OAuth 1.0a token with the Twitter credentials
     let auth = Oauth1aToken::new(
         config.consumer_key,
         config.consumer_secret,
@@ -129,72 +126,49 @@ async fn send_xeet(text: String) -> Result<()> {
         config.access_secret,
     );
     
-    // Create a Twitter API client with the auth token
     let twitter_client = TwitterApi::new(auth);
     
-    // Send the xeet
-    match twitter_client.post_tweet().text(text.clone()).send().await {
+    match twitter_client.post_tweet().text(text).send().await {
         Ok(response) => {
-            println!("{}", "Xeet sent successfully:".green().bold());
-            println!("{}", text);
             if let Some(ref xeet) = response.data {
-                println!("Xeet ID: {}", xeet.id);
+                println!("{} {}", "✓".green().bold(), xeet.id);
+            } else {
+                println!("{}", "✓".green().bold());
             }
             Ok(())
         },
         Err(e) => {
-            println!("{}", "Failed to send xeet:".red().bold());
-            println!("{}", e);
-            anyhow::bail!("Failed to send xeet: {}", e)
+            println!("{} {}", "✗".red().bold(), e);
+            anyhow::bail!("Failed to send xeet")
         }
     }
 }
 
 fn setup() -> Result<()> {
-    println!("{}", "Setting up Twitter credentials...".cyan());
-    println!("To use Xeet, you need to:");
-    println!("1. Create a Twitter Developer account at {}", "https://developer.x.com/en/portal/dashboard".green());
-    println!("2. Create a new Project and App in the Developer Portal");
-    println!("3. Enable read and write permissions");
-    println!("4. Set up your credentials in the global config file:");
-    println!("");
-    
     let config_path = Config::get_config_path()?;
     let config_dir = config_path.parent().unwrap();
     
     // Create config directory if it doesn't exist
     if !config_dir.exists() {
-        println!("Creating config directory: {:?}", config_dir);
         fs::create_dir_all(config_dir).context("Failed to create config directory")?;
     }
     
-    println!("{}", "GLOBAL CONFIG SETUP".yellow().bold());
+    println!("{}", "Setup:".cyan().bold());
     
-    if cfg!(windows) {
-        println!("Config location: %APPDATA%\\xeet\\config.toml");
+    let config_location = if cfg!(windows) {
+        format!("%APPDATA%\\xeet\\config.toml")
     } else {
-        println!("Config location: ~/.config/xeet/config.toml");
-    }
+        format!("~/.config/xeet/config.toml")
+    };
     
-    println!("");
-    println!("Add these contents to the config file:");
+    println!("1. Get API keys @ {}", "developer.x.com".green());
+    println!("2. Create TOML @ {}", config_location.yellow());
     println!("");
     println!("[credentials]");
     println!("consumer_key = \"your_api_key\"");
     println!("consumer_secret = \"your_api_secret\"");
     println!("access_token = \"your_access_token\"");
     println!("access_secret = \"your_access_token_secret\"");
-    println!("");
-    
-    println!("You can create this file with:");
-    
-    if cfg!(windows) {
-        println!("mkdir -p %APPDATA%\\xeet");
-        println!("notepad %APPDATA%\\xeet\\config.toml");
-    } else {
-        println!("mkdir -p ~/.config/xeet");
-        println!("nano ~/.config/xeet/config.toml");
-    }
     
     Ok(())
 }
