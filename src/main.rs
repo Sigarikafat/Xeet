@@ -109,9 +109,10 @@ async fn send_xeet(text: String) -> Result<()> {
 fn setup() -> Result<()> {
     println!("{}", "Setting up Twitter credentials...".cyan());
     println!("To use Xeet, you need to:");
-    println!("1. Create a Twitter Developer account at {}", "https://developer.twitter.com/".green());
-    println!("2. Create a Twitter app and get your API credentials");
-    println!("3. Copy .env.example to .env and fill in your Twitter API credentials:");
+    println!("1. Create a Twitter Developer account at {}", "https://developer.x.com/en/portal/dashboard".green());
+    println!("2. Create a new Project and App in the Developer Portal:");
+    println!("3. Enable read and write permissions:");
+    println!("4. Fill in the .env file with your credentials, see .env.example for reference:");
     println!("   X_CONSUMER_KEY=your_api_key");
     println!("   X_CONSUMER_SECRET=your_api_secret");
     println!("   X_ACCESS_TOKEN=your_access_token");
