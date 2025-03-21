@@ -45,6 +45,14 @@ Basic shitposting:
 xeet post -- "Hot take: semicolons in JavaScript are just spicy line breaks"
 ```
 
+Schedule a post for later (touch grass in the meantime):
+
+```bash
+xeet post -s 30 -- "I'm totally working and did not go out for a walk 30 minutes ago"
+```
+
+Scheduled posts run in the background, so your terminal remains free to use for other tasks!
+
 Need setup help? Type:
 
 ```bash
@@ -60,6 +68,7 @@ Add to your `.bashrc` or `.zshrc`:
 ```bash
 # For maximum efficiency bruh
 alias x="xeet post --"
+alias xs="xeet post -s"  # Using shorthand for schedule
 alias fr="xeet post -- 'fr fr no cap'"
 alias npc="xeet post -- 'yesss true'"
 alias npcrypto="xeet post -- 'gm!'"
@@ -69,6 +78,7 @@ Now you can post with:
 
 ```bash
 x "This meeting could've been an email frfr"
+xs 30 -- "Scheduled post 30 minutes from now"
 fr
 npc
 ```
@@ -84,6 +94,7 @@ bind -x '"\e[21~": "xeet post -- \"skill issue\""'  # F10 for instant L posting
 ## Features
 
 - Terminal shitposting (no browser = based)
+- Schedule posts for later (runs in background, keep using your terminal)
 - Won't get you maidenless (results may vary)
 
 ## License
