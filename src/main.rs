@@ -23,8 +23,8 @@ enum Commands {
         schedule: Option<u64>,
 
         /// The text of your xeet
-        #[clap(last = true)]
-        text: String,
+        #[clap(trailing_var_arg = true)]
+        text: Vec<String>,
     },
     /// Setup your Twitter credentials
     Setup,
@@ -119,12 +119,15 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Post { schedule, text } => match schedule {
-            Some(minutes) => {
-                schedule_xeet(minutes, text).await?;
-            }
-            None => {
-                send_xeet(text).await?;
+        Commands::Post { schedule, text } => {
+            let text = text.join(" ");
+            match schedule {
+                Some(minutes) => {
+                    schedule_xeet(minutes, text).await?;
+                }
+                None => {
+                    send_xeet(text).await?;
+                }
             }
         },
         Commands::Setup => {
@@ -221,7 +224,7 @@ async fn schedule_xeet(minutes: u64, text: String) -> Result<()> {
         cmd.args([
             "/C", 
             &format!(
-                "echo Scheduled at: {} > \"{}\" && echo Will execute at: {} >> \"{}\" && echo Command: {} post -- \"{}\" >> \"{}\" && timeout /T {} /NOBREAK > nul && \"{}\" post -- \"{}\" 2>> \"{}\" >> \"{}\"", 
+                "echo Scheduled at: {} > \"{}\" && echo Will execute at: {} >> \"{}\" && echo Command: {} post \"{}\" >> \"{}\" && timeout /T {} /NOBREAK > nul && \"{}\" post \"{}\" 2>> \"{}\" >> \"{}\"",
                 now.format("%Y-%m-%d %H:%M:%S"),
                 log_file.display(),
                 now.checked_add_signed(chrono::Duration::minutes(minutes as i64))
@@ -244,7 +247,7 @@ async fn schedule_xeet(minutes: u64, text: String) -> Result<()> {
         cmd.args([
             "-c", 
             &format!(
-                "echo 'Scheduled at: {}' > \"{}\" && echo 'Will execute at: {}' >> \"{}\" && echo 'Command: {} post -- \"{}\"' >> \"{}\" && (sleep {} && \"{}\" post -- \"{}\" 2>> \"{}\" >> \"{}\" &)", 
+                "echo 'Scheduled at: {}' > \"{}\" && echo 'Will execute at: {}' >> \"{}\" && echo 'Command: {} post \"{}\"' >> \"{}\" && (sleep {} && \"{}\" post \"{}\" 2>> \"{}\" >> \"{}\") &",
                 now.format("%Y-%m-%d %H:%M:%S"),
                 log_file.display(),
                 now.checked_add_signed(chrono::Duration::minutes(minutes as i64))
